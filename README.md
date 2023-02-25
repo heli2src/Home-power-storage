@@ -1,6 +1,7 @@
 # Home-power-storage
 AC coupled power storage for home supply.
 This project was implemented in 2018. Since then it has been running without any problems. The cost of battery storage with charger and battery inverter was around 2500 €. Calculated over the year, the solar coverage is 85%. In the summer months 97% and in the foggy December 52%.
+The self-consumption of the battery inverter and Arudiuno controller is <10 Watt.
 
 Build with:
 - 3.6 kWp Photovoltaic house roof system and solar inverter <img src="docs/images/roof.jpg" width="10%"></img> 
