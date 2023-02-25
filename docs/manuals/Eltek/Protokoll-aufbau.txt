@@ -1,0 +1,89 @@
+https://endless-sphere.com/forums/viewtopic.php?f=14&t=71139&start=100
+
+
+Re: ULtra Compact 1800W charger
+
+Post <https://endless-sphere.com/forums/viewtopic.php?p=1228701#p1228701> by circuit<https://endless-sphere.com/forums/memberlist.php?mode=viewprofile&u=9266> » Oct 04, 2016 12:05 pm
+Yes, BMS controls the flatpack. Now on final stages of firmware.
+The UART-CAN converter is a nice project on it's own, completely isolated, powered only from one side, also sub-100µA power consumption in standby mode
+(while still listening to CAN bus). So it can be used as a generic converter, not just for Eltek.
+The protocol is based on information that we got from Eltek. Basically, from what developer told me, it is not that far from what is published on this thread.
+
+Re: ULtra Compact 1800W charger
+
+Post <https://endless-sphere.com/forums/viewtopic.php?p=1246227#p1246227> by circuit<https://endless-sphere.com/forums/memberlist.php?mode=viewprofile&u=9266> » Dec 07, 2016 1:11 am
+Yes, currently it's a limitation, you have to disconnect bluetooth to connect CAN adapter. There will be a firmware to allow CAN adapter connection to other pins.
+
+
+
+
+
+CanID 0x05014004 + (Status data as previously described) then it is operating normally
+
+CanID 0x05014008 + (Status data as previously described) then it has a warning - remmie got this when in current limit mode which is a warning.
+
+CanID 0x0501400C + (Status data as previously described) then it has an alarm. remmie got this when mains failed which is an alarm.
+
+CanID 0x05014010 + (Status data as previously described) then it is in Walk in mode (as previously described).
+
+If you then send the rectifier
+
+CanID 0x0501BFFC + data 0x08, 0x04, 0x00,
+
+it will send you back
+
+CanID 0x0501BFFC + data 0x0E, 0x04, 0x00, 0xYY, 0xZZ, 0x00, 0x00
+where each bit of YY relates to the following WARNINGS
+80 = Current limit
+40 = low temp
+20 = High temp
+10 = Low Mains
+08 = High Mains
+04 = Mod Fail Secondary
+02 = Mod Fail Primary
+01 = OVS Lock Out
+and each bit of the of ZZ relates to the following WARNINGS
+80 = Inner Volt
+40 = Fan3 Speed low
+20 = Sub Mod1 fail
+10 = Fan2 Speed low
+08 = Fan1 Speed low
+04 = Mod Fail Secondary
+02 = Module fail
+01 = Internal Voltage
+
+if you send CanID 0x0501BFFC + data 0x08, 0x08, 0x00
+
+it will send you back
+
+CanID 0x0501BFFC + data 0x0E, 0x08, 0x00, 0xYY, 0xZZ, 0x00, 0x00
+
+where each bit of YY relates to the following ALARMS
+80 = Current limit
+40 = low temp
+20 = High temp
+10 = Low Mains
+08 = High Mains
+04 = Mod Fail Secondary
+02 = Mod Fail Primary
+01 = OVS Lock Out
+and each bit of ZZ relates to the following ALARMS
+80 = Inner Volt
+40 = Fan3 Speed low
+20 = Sub Mod1 fail
+10 = Fan2 Speed low
+08 = Fan1 Speed low
+04 = Mod Fail Secondary
+02 = Module fail
+01 = Internal Voltage
+
+I don't think all the warnings and alarms are relevant to all rectifiers but it will help you to find out what is going on if the rectifier sends you a CanID 0x05014008 or 0x0501400C.
+
+I have also found ways to get other status info like firmware versions, max current, max voltage, converter part number, converter type etc but these are not that interesting.
+
+
+Would anyone know how you can individually control the rectifiers or turn the output off on a specific rectifier? Remmie has showed how 
+to send a broadcast to all rectifiers using canID 0x5FF4004, but I want to be able to control individual rectifiers and turn their output off if not required.
+
+
+
