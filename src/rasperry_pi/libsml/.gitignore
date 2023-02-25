@@ -1,0 +1,32 @@
+# Debian Packaging
+/.pc/
+/debian/files
+/debian/libsml1/
+/debian/libsml-dev/
+/debian/*.debhelper*
+/debian/*.substvars
+
+# Binaries
+/test/test
+/examples/sml_server
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so.*
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Editor files
+*~
+*.swp
+.project
+.cproject
