@@ -111,7 +111,9 @@ void mqtt_loop(){
         sprintf(tbuffer, "%3d", ae_status);        
         mqttClient.publish("Battery/deliver_state", tbuffer);
         sprintf(tbuffer, "%3d", el_status);            
-        mqttClient.publish("Battery/store_state", tbuffer);     
+        mqttClient.publish("Battery/store_state", tbuffer);  
+        sprintf(tbuffer, "%2d ", bat_status);            
+        mqttClient.publish("Battery/bat_state", tbuffer);    
     }
     if ((millis() - sma_online) > 20000) {
         solar = -1;

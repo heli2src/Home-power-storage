@@ -20,8 +20,8 @@ void setup_lcd() {
     oled.clear();  
     oled.setContrast(255);
     oled.set2X();
-    oled.println("Solar 0.30");
-    oled.println("6.09.2021");
+    oled.println("Solar 0.31");
+    oled.println("3.04.2023");
     oled.println(" (c)Heli2 ");
     oled.set2X();    
     //oled.println("init ");   

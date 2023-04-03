@@ -150,6 +150,7 @@ void eltek_set_vout(int inc){                      // check and set Vout, if ok 
         if (el_target_vout>=CEL_BAT_VMAX_CV) {
             el_target_vout=CEL_BAT_VMAX_CV;               // maximum Voltage reached -> switch to Constant Voltage
             el_status=20;  
+            bat_status = 2;
         }    
         el_vwait();  
     }else if ((el_vout>= el_target_vout)&& (el_vout<CEL_BAT_VMAX_CV)) {    //increment vout til reached CEL_BAT_VMAX_CV (CC-mode)
@@ -157,6 +158,7 @@ void eltek_set_vout(int inc){                      // check and set Vout, if ok 
         if (el_target_vout>CEL_BAT_VMAX_CV)
             el_target_vout=CEL_BAT_VMAX_CV;               // maximum Voltage reached -> switch to Constant Voltage
             el_status=20;
+            bat_status = 2;
         el_vwait();
     }else if (el_vout<el_target_vout){
         el_status+=inc;  
@@ -205,6 +207,7 @@ void eltek_disable(bool switchoff){
         el_status=-3;
     }else
         el_status=-1;
+    bat_status = 1;
     el_target_vout=CEL_VOUT_MIN;
     el_target_iout=0;
     el_current_timeout=0;
@@ -252,6 +255,7 @@ bool eltek_setpower(int power){               // return with true: battery full:
      }else if (el_status>=10){                                                     //calculate maxcurrent
          eltek_set_vout(0);                   // check and set vout
          iout=  round(float(power) / float(el_vout/100)*10);  
+         bat_status = 3;
          if (iout<CEL_MINCURRENT)  
              iout=0;            
          else if ((el_iout<(0.5*CEL_MINCURRENT)) and (iout > 4*CEL_MINCURRENT))      //to avoid currentspike, start with minimum current
@@ -281,10 +285,12 @@ bool eltek_setpower(int power){               // return with true: battery full:
          if (el_cv_loading or ((el_vout>= CEL_BAT_VMAX_CV) and (iout>CEL_MAXCC_CURRENT))) {      //Batterie almost full, reduce current to avoid overvoltage above CEL_BAT_VMAX_CV
              if (iout>CEL_MAXCC_CURRENT) 
                  iout=CEL_MAXCC_CURRENT;
+             bat_status = 2;
              el_cv_loading=true;                // = Batterie almost full, reduce current
              if (el_vout>=CEL_BAT_VMAX) {       
                  el_target_iout=0;              // = now Batterie is full
-                 result=true;  
+                 result=true;
+                 bat_status = 1;
                  DEBUG("Battery full, el_vout=CEL_BAT_VMAX",el_vout);                
              }
          }

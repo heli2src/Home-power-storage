@@ -100,6 +100,12 @@
 
 int bat_target;              // target battery power
 int bat_actual;              // actual battery power
+int  bat_status = 0;         // acutal battery status
+//                0 = unknown
+//               -1 = empty
+//                1 = enabled
+//                2 = load_reduced
+//                3 = load
 bool update_batcalculate;    // if set, than new calculate from batterycurrent
 bool bat_full;               // batterie is full
 bool bat_empty;              // batterie is empty
@@ -175,6 +181,8 @@ void set_bat(){
 //discharge    
     if ((!bat_empty) and(el_iout<=2) and (bat_target>=0) ) {         // discharge battery if battery not empty, el_iout should be <200mA      
         bat_empty= not ae_set_power(bat_target);
+        if (bat_status < 1)
+            bat_status = 1;
         DEBUG("ae discharge Import, error_import",evu_import,evu_error,"bat_target,ae_Pnetz,ae_Pbat, ae_status, ae_Energy",bat_target,ae_Pnetz,ae_Pbat,ae_status,ae_Energy);        //ae conversion
         if ((int(ae_Vbat*100))<(CEL_BAT_VMAX-CEL_BAT_HYST_LOAD)) {
             el_cv_loading=false;
@@ -187,6 +195,7 @@ void set_bat(){
         bat_empty= not ae_set_power(0);     //bms scheint bei disable nicht abzuschalten??!
         DEBUG("Battery is empty");
         ae_disable();
+        bat_status = -1;
     }     
 }
 
