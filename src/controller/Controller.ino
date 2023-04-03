@@ -1,31 +1,31 @@
 /*
-   Battery Control:
+   Battery Control:   with Arduino Mega 2560
 
     Author:  Christian Jung
-    Date:    14.09.2020
-    Version: 0.94
+    Date:    06.11.2022
+    Version: 0.31
 
     https://creativecommons.org/licenses/by-nc-nd/4.0/
   
     - get data about mqtt:                                                     (see mqtt.h, mqtt)
        Solar:
-         - sma/P_AC 
+         - sma/P_AC                 --> variable: Battery/solar
          - sma/TIME
        evu_import
-         - Smartmeter/1-0:16.7.0
+         - Smartmeter/1-0:16.7.0    -> variable: Battery/evu_import
        loading power from Wallbox
          - Wallbox/power            if wallbox loading, than switch off loading battery, 
       publish data with mqtt: 
          - Battery/online
          - powertarget, power, store, el_vout, stored_vbat, ae_status, el_status  ->should be changed to one topic with json-format
-    - controll Battery current for load and discharge
-    - run ethernet UDP-client with export from some Battery status variable     (see sml_client, sml_client)
+         - controll Battery current for load and discharge
+         - run ethernet UDP-client with export from some Battery status variable     (see sml_client, sml_client)
           -> replaced with mqtt, but not removed from this version...
              have to change receiver client to mqtt first
-    - connect eltek power supply via CAN for loading                            (see eltek.h, eltek)
+         - connect eltek power supply via CAN for loading                            (see eltek.h, eltek)
             read out Temp,Vin, Vout, Iout, Pout
             set vout, iout and calculate power for loading battery
-    - connect aeconversion INV500-90EU RS485 via RS485/UART                     (see aeconversioh.h, aeconversion)
+         - connect aeconversion INV500-90EU RS485 via RS485/UART                     (see aeconversioh.h, aeconversion)
             switch off MPP-Tracking, 
             set Voltage and current for discharge
     - display some information on a smal OLED Display  via I2C                  (see lcd.h, lcd)
@@ -62,14 +62,13 @@
 
 
    todo:  
-      - add filter for loading, wenn erkannt wird das ein Verbraucher in kurzen Abständen viel Strom zieht, dann den eigenen Ladestrom während den Abständen nicht hochfahren
-      - remove sml_get data, sml_import changed to mqtt evu_import
+      - add filter for loading, wenn erkannt wird das ein Verbraucher in kurzen Abständen viel Strom zieht(z.Bsp getaktete Herdplatte), dann den eigenen Ladestrom während den Abständen nicht hochfahren
       - um 0:00 zähler von aeconversion auf 0 stellen.
       - get bms-information via CAN and send it via mqtt
                    
     Arduino Power consumption:
             with Relais Eltek line power: 3.9Wh
-            AECONVERSIon needs 45mA from Battery, auch wenn Strom auf 0 gestellt ist
+            AECONVERSIon needs 45mA from Battery, also if current set to 0 
  */
 #define SERIAL_DEBUG true
 #define SERIAL_DEBUG_SEPARATOR    " "
@@ -77,6 +76,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Wire.h>
+#include <avr/wdt.h>
 
 #include "lcd.h"
 #include "eltek.h"
@@ -89,9 +89,9 @@
 #define CBA_MIN_SOLAR 100            // min Solarpower, if smaller than disable power line for Eltek
 #define CBA_MIN_HPOWER 70            // minium house power consumption, for plausible test
 #define CBA_MAX_CPOWER 1800          // maximum charge Power
-#define CBA_MIN_CPOWER 30            // minimum charge Power
+#define CBA_MIN_CPOWER 25            // minimum charge Power
 #define CBA_MAX_DPOWER 500           // maximum discharge Power
-#define CBA_MIN_DPOWER 20            // minimum discharge Power
+#define CBA_MIN_DPOWER 15            // minimum discharge Power
 
 #define CBA_LOAD_OFFSET 15           // Battery load= Import + CBA_LOAD_OFFSET    (import is negativ if loading)
 
@@ -115,6 +115,7 @@ bool reset_cnt;
 
 void setup() {
     uint8_t mcusr_copy;
+    wdt_enable(WDTO_8S);
     mcusr_copy = MCUSR;
     MCUSR = 0x00;        //Clear register
 
@@ -153,13 +154,13 @@ void setup() {
     reset=true;
     reset_cnt = true;
     bat_update=0;
-    digitalWrite(13,LOW);     // was macht das ?? --> check !!!!
+    digitalWrite(13,LOW);
 }
 
 
 void set_bat(){
 //charge  
-    if ((!bat_full) and (solar>CBA_MINBAT_SOLAR) and (ae_Ibat<=0.2) and (bat_target<0) and (wallbox<100)){  //battery is not full, discharge disabled and enough power from solar available and wallbox is not loading-> charge battery
+    if ((!bat_full) and (solar>CBA_MINBAT_SOLAR) and (ae_Ibat<=0.2) and (bat_target<0) and (wallbox<100)){  //battery is not full, discharge disabled, enough power from solar available and wallbox is not loading-> charge battery
         bat_full=eltek_setpower(-bat_target);
         DEBUG("eltek load, Import, bat_target,bat_actual",evu_import,bat_target,bat_actual,"el_pout(100mw), el_vout, el_iout, target el_iout, el_ws",el_pout,el_vout,el_iout,el_target_iout,el_ws/3600);    //display eltek
         if (bat_empty and el_vout>(int(AE_VMIN+AE_VMIN_HYST)*100)) {
@@ -244,4 +245,5 @@ void loop() {
     while ((millis()-time_loop)<CEL_LOOP_TIME);             // loop with 250ms
     time_loop=millis();
     time_count++;
+    wdt_reset();
 }
