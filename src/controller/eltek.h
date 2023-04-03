@@ -9,10 +9,10 @@
 #define CEL_MAXCC_CURRENT   120                   // maximum battery load current if in constant current mode (*100mA) = 12A
 #define CEL_VOUT_MIN        4620                  // minimum Eltek Vout (*10mV) = 14*3,3V
 #define CEL_DELTA_VOUT      10                    // increment Eltek Vout (*10mV) with 100mv
-#define CEL_BAT_VMIN        4760                  // minimum battery voltage(*10mV = 14*3,4V
+#define CEL_BAT_VMIN        4760                  // minimum battery voltage(*10mV = 14*3,4
 #define CEL_BAT_VMAX_CV     5600                  // maximum battery voltage(*10mV), if reached switch to CV loading  = 14*4,0V
 //#define CEL_BAT_VMAX_CV     5320                  // 14*3.8  for Sommer                                                 
-#define CEL_BAT_VMAX        CEL_BAT_VMAX_CV+42    // absolut maximum battery voltage battery cell voltage +30mV *14 cells
+#define CEL_BAT_VMAX        CEL_BAT_VMAX_CV+42    // absolut maximum battery voltage battery cell voltage +42mV *14 cells
 #define CEL_BAT_HYST_LOAD   140                   // hysteresis for loading enable after battery full   = 14* 0.1V =1.4V
 #define CEL_CURRENT_OFFSET  2                     // current Correcttion value for calculate Power
 

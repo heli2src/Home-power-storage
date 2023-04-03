@@ -34,8 +34,6 @@
 int sml_errorcnt;
 bool sml_error_actual;
 
-//byte mac[] = { 0xC0, 0x01, 0xC0, 0x1A, 0xBA, 0xBE};      // MAC address and IP address for your controller below.
-//byte ip[] = {192, 168, 178, 37};                         // The IP address will be dependent on your local network:
 byte server[]= {192, 168, 178, 28};                      // Enter the IP address of the server you're connecting to:
 int port=14550;
 
@@ -163,20 +161,3 @@ int sml_receive(){                                                 // get time a
     }else sml_error_actual=true;
     return result;  
 }
-
-
-//void sml_get_data(){              // get data: sml_import, set sml_erro if something wrong
-//    //DEBUG("sml_get_data");
-//    int value;
-//    sml_send_167();
-//    value=sml_receive();    
-//    if (sml_error_actual) {    
-//        if (sml_errorcnt>SM_THERROR) sml_error=true;  
-//        else sml_errorcnt++;        
-//    }else{
-//        sml_import= value;        //import is positiv if import from line, negativ if solar       
-//        sml_errorcnt=0;
-//        sml_error=false;    
-//    }  
-    //DEBUG(sml_time, sml_import,sml_errorcnt,sml_error);       
-//}

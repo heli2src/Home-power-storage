@@ -32,9 +32,9 @@ void callback(char* topic, byte* payload, unsigned int plength) {
       sma_online = millis();
       //DEBUG(topic,solar);   
   }else if (!strcmp(topic, EVUIMPORT)){
-      evu_import = payload2int(payload, plength-4);
+      evu_import = payload2int(payload, plength);
       evu_online = millis();
-      //DEBUG(topic,evu_import);
+      //DEBUG("evu_import", topic, evu_import);
   }else if (!strcmp(topic, STIME)){
       payload[plength] = '\0';
       utc = atol(payload) % 86400;    // stime in total seconds per day (utc time)
