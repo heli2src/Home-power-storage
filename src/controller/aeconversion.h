@@ -9,7 +9,7 @@
 #define AE_VNETZ_MAX 250
 
 #define AE_MAXCURRENT  11.0                   // maximum Current
-#define AE_VMIN  49.0                         // mimimum Batterie Voltage = 49/14Cells ->3.485V/cell, if smaller ae_status set to -2
+#define AE_VMIN  50.0                         // mimimum Batterie Voltage = 50.0/14Cells ->3.57V/cell, if smaller ae_status set to -2
 #define AE_VMIN_HYST 0.5                      // if Battery Voltage < AE_VMIN +AE_VMIN_HYST  -> ae_status set to -2
 
 #define AE_VMAX  60.0                         // maximum Batterie Voltage = 14Cells *4,2 -> 58,8V
