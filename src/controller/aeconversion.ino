@@ -117,10 +117,10 @@ void ae_send() {
 bool ae_query() {                 // send ae_buffer and receive ae_rxbuffer, if no data receive after timeout -> result=false
     ae_rxbuffer="";
     ae_serialEvent1();                      // clear RX_Buffer
-    DEBUG("ae_query discard:", ae_rxbuffer);
+//    DEBUG("ae_query discard:", ae_rxbuffer);
     digitalWrite(AE_ENABLE_PIN, HIGH);      // TX
     delay(5);                               // wait 1ms
-    DEBUG("ae_query send:", ae_buffer);    
+//    DEBUG("ae_query send:", ae_buffer);    
     Serial1.print(ae_buffer);
     Serial1.flush();    
     digitalWrite(AE_ENABLE_PIN, LOW);       // RX
@@ -144,7 +144,7 @@ bool ae_query() {                 // send ae_buffer and receive ae_rxbuffer, if 
 //    }
     ae_error_client=0;
     //ae_newRX=false;
-    DEBUG("ae_query:  receive RS485: ", ae_rxbuffer, "lenght =",ae_rxbuffer.length());
+//    DEBUG("ae_query:  receive RS485: ", ae_rxbuffer, "lenght =",ae_rxbuffer.length());
     return true;
 }
 
